@@ -1,9 +1,9 @@
 ###########################################
-# Syntax Coloring Map For Dtime-library
+# Syntax Coloring Map For SDHT-library
 ###########################################
 
 ###########################################
-# Datatypes			(KEYWORD1)
+# Class			(KEYWORD1)
 ###########################################
 
 SDHT				KEYWORD1
