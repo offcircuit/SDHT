@@ -6,7 +6,7 @@
 # Class			(KEYWORD1)
 ###########################################
 
-SDHT				KEYWORD1
+SDHT				  KEYWORD1
 
 ###########################################
 # Constants			(LITERAL1)
@@ -18,4 +18,3 @@ DHT22				LITERAL1
 temperature			LITERAL1
 humidity			LITERAL1
 notice				LITERAL1
-
