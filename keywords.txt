@@ -3,18 +3,32 @@
 ###########################################
 
 ###########################################
-# Class			         (KEYWORD1)
+# Datatypes			(KEYWORD1)
 ###########################################
 
-SDHT			  KEYWORD1
+SDHT				KEYWORD1
+Temperature			KEYWORD1
+
+###########################################
+# Methods			(KEYWORD2)
+###########################################
+
+setCelsius			KEYWORD2
+setFahrenheit			KEYWORD2
+setKelvin			KEYWORD2
 
 ###########################################
 # Constants			(LITERAL1)
 ###########################################
 
 DHT11				LITERAL1
+DHT21				LITERAL1
 DHT22				LITERAL1
 
 temperature			LITERAL1
+celsius				LITERAL1
+fahrenheit			LITERAL1
+heat				LITERAL1
 humidity			LITERAL1
+kelvin				LITERAL1
 notice				LITERAL1

@@ -1,8 +1,8 @@
-# SDHT
-DHT sensor class
+# DTime
+Date &amp; Time class
 
 # TESTED ON
 
 arduino uno
 
-ATMEGA 328P
+esp8266 D1 mini
