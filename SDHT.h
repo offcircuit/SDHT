@@ -1,6 +1,3 @@
-#ifndef TEMPERATURE_H
-#define TEMPERATURE_H
-
 #ifndef SDHT_H
 #define SDHT_H
 
@@ -23,36 +20,50 @@
 #define SDHT_ERR_ACK_H 6
 #define SDHT_ERR_MODEL 7
 
-class Temperature {
-  public:
-    const double &celsius = _celsius, &fahrenheit = _fahrenheit, &kelvin = _kelvin;
-
-    setCelsius(double c);
-    setFahrenheit(double f);
-    setKelvin(double k);
-
-  private:
-    double _celsius = 0, _fahrenheit = 32, _kelvin = 273.15;
-};
 
 class SDHT
 {
+  private:
+    class Temperature {
+      public:
+        const double &celsius = _celsius, &fahrenheit = _fahrenheit, &kelvin = _kelvin;
+
+        setCelsius(double c) {
+          _celsius = c;
+          _fahrenheit = c * 1.8 + 32;
+          _kelvin = c + 273.15;
+        }
+        
+        setFahrenheit(double f) {
+          _celsius = (f - 32) / 1.8;
+          _fahrenheit = f;
+          _kelvin = (f + 459.67) * 5 / 9;
+        }
+
+        setKelvin(double k) {
+          _celsius = k - 273.15;
+          _fahrenheit = k * 9 / 5 - 459.67;
+          _kelvin = k;
+        }
+
+      private:
+        double _celsius = 0, _fahrenheit = 32, _kelvin = 273.15;
+    };
+
+    double _humidity = 0;
+    uint8_t buffer[5] = {0, 0, 0, 0, 0};
+    uint8_t _notice = SDHT_OK;
+    Temperature _heat, _temperature;
+
+    uint8_t checksum();
+    bool read(uint8_t p, uint8_t m);
+
   public:
     const double &humidity = _humidity;
     const uint8_t &notice = _notice;
     Temperature &heat = _heat, &temperature = _temperature;;
 
-    SDHT(uint8_t pin, uint8_t model);
-
-  private:
-    uint8_t buffer[5] = {0, 0, 0, 0, 0};
-    double _humidity = 0;
-    uint8_t _notice = SDHT_OK;
-    Temperature _heat, _temperature;
-
-    uint8_t checksum();
-    bool read(uint8_t _pin, uint8_t _model);
+    SDHT(uint8_t p, uint8_t m);
 };
 
-#endif
 #endif
