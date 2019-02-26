@@ -7,19 +7,24 @@
 #include "WProgram.h"
 #endif
 
-#define DHT11 11
-#define DHT12 12
-#define DHT21 21
-#define DHT22 22
+#define DHT11 0
+#define DHT12 1
+#define DHT21 2
+#define DHT22 3
 
+#define SDHT_CYCLES microsecondsToClockCycles(1000)
+
+#define SDHT_NULL 0
 #define SDHT_OK 1
-#define SDHT_ERR_CHECKSUM 2
-#define SDHT_ERR_TIMEOUT 3
-#define SDHT_ERR_CONNECT 4
-#define SDHT_ERR_ACK_L 5
-#define SDHT_ERR_ACK_H 6
-#define SDHT_ERR_MODEL 7
-
+#define SDHT_LOADED 2
+#define SDHT_WRONG_PARITY 3
+#define SDHT_ERROR_PIN 4
+#define SDHT_ERROR_MODEL 5
+#define SDHT_ERROR_CONNECT 6
+#define SDHT_ERROR_REQUEST 7
+#define SDHT_ERROR_RESPONSE 8
+#define SDHT_ERROR_WAIT 9
+#define SDHT_ERROR_VALUE 10
 
 class SDHT
 {
@@ -33,7 +38,7 @@ class SDHT
           _fahrenheit = c * 1.8 + 32;
           _kelvin = c + 273.15;
         }
-        
+
         setFahrenheit(double f) {
           _celsius = (f - 32) / 1.8;
           _fahrenheit = f;
@@ -51,19 +56,21 @@ class SDHT
     };
 
     double _humidity = 0;
-    uint8_t buffer[5] = {0, 0, 0, 0, 0};
-    uint8_t _notice = SDHT_OK;
+    uint8_t data[5], _notice = SDHT_NULL, _pin, _port, _bit;
+    uint16_t _signal;
+
     Temperature _heat, _temperature;
 
-    uint8_t checksum();
-    bool read(uint8_t p, uint8_t m);
+    uint8_t read(uint16_t msDelay);
+    bool pulse(uint8_t b);
 
   public:
     const double &humidity = _humidity;
     const uint8_t &notice = _notice;
-    Temperature &heat = _heat, &temperature = _temperature;;
+    Temperature &heat = _heat, &temperature = _temperature;
 
-    SDHT(uint8_t p, uint8_t m);
+    explicit SDHT() {};
+    uint8_t broadcast(uint8_t pin, uint8_t model);
 };
 
 #endif
