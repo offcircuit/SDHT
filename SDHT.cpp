@@ -1,4 +1,3 @@
-#include "wiring_digital.c"
 #include "SDHT.h"
 
 uint8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
