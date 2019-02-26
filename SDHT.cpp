@@ -4,7 +4,7 @@
 uint8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
   if (model > DHT22) _notice = SDHT_ERROR_MODEL;
   else if ((_port = digitalPinToPort(_pin = pin)) == NOT_A_PIN) _notice = SDHT_ERROR_PIN;
-  else if ((_notice = read((model < 2) ? 20 : 1)) == SDHT_LOADED) {
+  else if ((_notice = read((model < DHT21) ? 20 : 1)) == SDHT_LOADED) {
 
     switch (model) {
       case DHT11:
