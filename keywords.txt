@@ -22,6 +22,10 @@ setKelvin			KEYWORD2
 # Constants			(LITERAL1)
 ###########################################
 
+SDHT_NO_HEAT			LITERAL1
+SDHT_NO_KELVIN			LITERAL1
+SDHT_NO_FAHRENHEIT		LITERAL1
+
 DHT11				LITERAL1
 DHT12				LITERAL1
 DHT21				LITERAL1
