@@ -8,7 +8,7 @@
 #endif
 
 //#define SDHT_NO_HEAT //UNCOMMENT TO DISABLE HEAT INDEX
-//#define SDHT_NO_KELVIN //UNCOMMENT TO DISABLE KELVIN 
+//#define SDHT_NO_KELVIN //UNCOMMENT TO DISABLE KELVIN
 //#define SDHT_NO_FAHRENHEIT //UNCOMMENT TO DISABLE FAHRENHEIT
 
 #define DHT11 0
@@ -35,62 +35,51 @@ class SDHT
   private:
     class Temperature {
       public:
-        const double &celsius = _celsius;
+        double celsius = 0;
 
 #ifndef SDHT_NO_FAHRENHEIT
-        const double &fahrenheit = _fahrenheit;
+        double fahrenheit = 32;
 #endif
 
 #ifndef SDHT_NO_KELVIN
-        const double &kelvin = _kelvin;
+        double kelvin = 273.15;
 #endif
 
         setCelsius(double c) {
-          _celsius = c;
+          celsius = c;
 
 #ifndef SDHT_NO_FAHRENHEIT
-          _fahrenheit = c * 1.8 + 32;
+          fahrenheit = c * 1.8 + 32;
 #endif
 
 #ifndef SDHT_NO_KELVIN
-          _kelvin = c + 273.15;
+          kelvin = c + 273.15;
 #endif
         }
 
         setFahrenheit(double f) {
-          _celsius = (f - 32) / 1.8;
+          celsius = (f - 32) / 1.8;
 
 #ifndef SDHT_NO_FAHRENHEIT
-          _fahrenheit = f;
+          fahrenheit = f;
 #endif
 
 #ifndef SDHT_NO_KELVIN
-          _kelvin = (f + 459.67) * 5 / 9;
+          kelvin = (f + 459.67) * 5 / 9;
 #endif
         }
 
         setKelvin(double k) {
-          _celsius = k - 273.15;
+          celsius = k - 273.15;
 
 #ifndef SDHT_NO_FAHRENHEIT
-          _fahrenheit = k * 9 / 5 - 459.67;
+          fahrenheit = k * 9 / 5 - 459.67;
 #endif
 
 #ifndef SDHT_NO_KELVIN
-          _kelvin = k;
+          kelvin = k;
 #endif
         }
-
-      private:
-        double _celsius = 0;
-
-#ifndef SDHT_NO_FAHRENHEIT
-        double _fahrenheit = 32;
-#endif
-
-#ifndef SDHT_NO_KELVIN
-        double _kelvin = 273.15;
-#endif
     };
 
     double _humidity = 0;
@@ -100,7 +89,7 @@ class SDHT
 #ifndef SDHT_NO_HEAT
     Temperature _heat;
 #endif
- 
+
     Temperature _temperature;
 
     uint8_t read(uint16_t msDelay);
@@ -109,7 +98,7 @@ class SDHT
   public:
     const double &humidity = _humidity;
     const uint8_t &notice = _notice;
-    
+
 #ifndef SDHT_NO_HEAT
     const Temperature &heat = _heat;
 #endif
