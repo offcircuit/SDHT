@@ -67,7 +67,7 @@ class SDHT
   public:
     const double &humidity = _humidity;
     const uint8_t &notice = _notice;
-    Temperature &heat = _heat, &temperature = _temperature;
+    const Temperature &heat = _heat, &temperature = _temperature;
 
     explicit SDHT() {};
     uint8_t broadcast(uint8_t pin, uint8_t model);
