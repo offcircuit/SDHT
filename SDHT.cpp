@@ -71,7 +71,7 @@ uint8_t SDHT::read(uint8_t pin, uint8_t msDelay)
 
   noInterrupts();
 
-  int buffer;
+  uint8_t buffer;
 
   pinMode(pin, OUTPUT);
   digitalWrite(pin, LOW);
