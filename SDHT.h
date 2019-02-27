@@ -16,12 +16,10 @@
 #define DHT21 2
 #define DHT22 3
 
-#define SDHT_CYCLES microsecondsToClockCycles(1000)
+#define SDHT_CYCLES microsecondsToClockCycles(200)
 
-#define SDHT_NULL 0
+#define SDHT_WRONG_PARITY 0
 #define SDHT_OK 1
-#define SDHT_LOADED 2
-#define SDHT_WRONG_PARITY 3
 
 #define SDHT_ERROR_MODEL -1
 #define SDHT_ERROR_PIN -2
@@ -46,7 +44,7 @@ class SDHT
         double kelvin = 273.15;
 #endif
 
-        setCelsius(double c) {
+        void setCelsius(double c) {
           celsius = c;
 
 #ifndef SDHT_NO_FAHRENHEIT
@@ -58,7 +56,7 @@ class SDHT
 #endif
         }
 
-        setFahrenheit(double f) {
+        void setFahrenheit(double f) {
           celsius = (f - 32) / 1.8;
 
 #ifndef SDHT_NO_FAHRENHEIT
@@ -70,7 +68,7 @@ class SDHT
 #endif
         }
 
-        setKelvin(double k) {
+        void setKelvin(double k) {
           celsius = k - 273.15;
 
 #ifndef SDHT_NO_FAHRENHEIT
@@ -84,27 +82,24 @@ class SDHT
     };
 
     double _humidity = 0;
-    uint8_t data[5], _notice = SDHT_NULL, _bit;
+    uint8_t _data[5], _bitmask, _port;
     uint16_t _signal;
+    Temperature _temperature;
 
 #ifndef SDHT_NO_HEAT
     Temperature _heat;
 #endif
 
-    Temperature _temperature;
-
+    bool pulse(uint8_t bitmask);
     uint8_t read(uint8_t pin, uint8_t msDelay);
-    bool pulse(uint8_t port, uint8_t bitmask);
 
   public:
     const double &humidity = _humidity;
-    const uint8_t &notice = _notice;
+    const Temperature &temperature = _temperature;
 
 #ifndef SDHT_NO_HEAT
     const Temperature &heat = _heat;
 #endif
-
-    const Temperature &temperature = _temperature;
 
     explicit SDHT() {};
     uint8_t broadcast(uint8_t pin, uint8_t model);

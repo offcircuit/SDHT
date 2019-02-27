@@ -1,24 +1,26 @@
 #include "SDHT.h"
 
 uint8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
-  if (model > DHT22) _notice = SDHT_ERROR_MODEL;
-  else if ((_notice = read(pin, (model < DHT21) ? 20 : 1)) == SDHT_LOADED) {
+  int8_t notice;
 
+  if (model > DHT22) notice = SDHT_ERROR_MODEL;
+  else if ((_port = digitalPinToPort(pin)) == NOT_A_PIN) notice = SDHT_ERROR_PIN;
+  else if (!(notice = read(pin, (model < DHT21) ? 20 : 1))) {
     switch (model) {
       case DHT11:
-        _humidity = data[0] + (data[1] * .1);
-        _temperature.setCelsius(data[2] + (data[3] * .1));
+        _humidity = _data[0] + (_data[1] * .1);
+        _temperature.setCelsius(_data[2] + (_data[3] * .1));
         break;
 
       case DHT12:
-        _humidity = data[0] + (data[1] * .1);
-        _temperature.setCelsius((data[2] + ((data[3] & 0x7F) * .1)) * ((data[3] & 0x80) ? -1 : 1));
+        _humidity = _data[0] + (_data[1] * .1);
+        _temperature.setCelsius((_data[2] + ((_data[3] & 0x7F) * .1)) * ((_data[3] & 0x80) ? -1 : 1));
         break;
 
       case DHT21:
       case DHT22:
-        _humidity = word(data[0], data[1]) * .1;
-        _temperature.setCelsius(word((data[2] & 0x7F), data[3]) * ((data[2] & 0x80) ? -.1 : .1));
+        _humidity = word(_data[0], _data[1]) * .1;
+        _temperature.setCelsius(word((_data[2] & 0x7F), _data[3]) * ((_data[2] & 0x80) ? -.1 : .1));
         break;
     }
 #ifndef SDHT_NO_HEAT
@@ -52,26 +54,28 @@ uint8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
     _heat.setFahrenheit(heatIndex);
 
 #endif
-    _notice = ((data[4] == uint8_t(data[0] + data[1] + data[2] + data[3])) ? SDHT_OK : SDHT_WRONG_PARITY);
+    notice = (_data[4] == uint8_t(_data[0] + _data[1] + _data[2] + _data[3])) ? SDHT_OK : SDHT_WRONG_PARITY;
   }
-  return _notice;
+  interrupts();
+  return notice;
+}
+
+bool SDHT::pulse(uint8_t bitmask) {
+  _signal = 0;
+  while ((*portInputRegister(_port) & _bitmask) == bitmask) if (SDHT_CYCLES < _signal++) return false;
+  return (_signal != 0);
 }
 
 uint8_t SDHT::read(uint8_t pin, uint8_t msDelay)
 {
-  uint8_t port;
-  if ((port = digitalPinToPort(pin)) == NOT_A_PIN) return SDHT_ERROR_PIN;
+  uint16_t buffer;
 
-  _bit = digitalPinToBitMask(pin);
-  data[0] = data[1] = data[2] = data[3] = data[4] = 0;
+  _bitmask = digitalPinToBitMask(pin);
+  _data[0] = _data[1] = _data[2] = _data[3] = _data[4] = 0;
 
-#if defined(ESP8266)
+#ifdef ESP8266
   yield();
 #endif
-
-  noInterrupts();
-
-  uint8_t buffer;
 
   pinMode(pin, OUTPUT);
   digitalWrite(pin, LOW);
@@ -79,23 +83,17 @@ uint8_t SDHT::read(uint8_t pin, uint8_t msDelay)
   digitalWrite(pin, HIGH);
   pinMode(pin, INPUT);
 
-  if (pulse(port, _bit)) return SDHT_ERROR_CONNECT;
-  if (pulse(port, 0)) return SDHT_ERROR_REQUEST;
-  if (pulse(port, _bit)) return SDHT_ERROR_RESPONSE;
+  noInterrupts();
+
+  if (!pulse(_bitmask)) return SDHT_ERROR_CONNECT;
+  if (!pulse(0)) return SDHT_ERROR_REQUEST;
+  if (!pulse(_bitmask)) return SDHT_ERROR_RESPONSE;
 
   for (int i = 0; i < 40; i++) {
-    if (pulse(port, 0)) return SDHT_ERROR_WAIT - (i * 2);
+    if (!pulse(0)) return SDHT_ERROR_WAIT - (i * 2);
     buffer = _signal;
-    if (pulse(port, _bit) < 0) return SDHT_ERROR_VALUE - (i * 2 + 1);
-    data[i / 8] += data[i / 8] + (_signal > buffer);
+    if (!pulse(_bitmask) < 0) return SDHT_ERROR_VALUE - (i * 2 + 1);
+    _data[i / 8] += _data[i / 8] + (_signal > buffer);
   }
-
-  interrupts();
-  return SDHT_LOADED;
-}
-
-bool SDHT::pulse(uint8_t port, uint8_t bitmask) {
-  _signal = 0;
-  while ((*portInputRegister(port) & _bit) == bitmask) if (SDHT_CYCLES < _signal++) return true;
-  return (_signal == 0);
+  return false;
 }
