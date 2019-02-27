@@ -2,8 +2,7 @@
 
 uint8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
   if (model > DHT22) _notice = SDHT_ERROR_MODEL;
-  else if ((_port = digitalPinToPort(_pin = pin)) == NOT_A_PIN) _notice = SDHT_ERROR_PIN;
-  else if ((_notice = read((model < DHT21) ? 20 : 1)) == SDHT_LOADED) {
+  else if ((_notice = read(pin, (model < DHT21) ? 20 : 1)) == SDHT_LOADED) {
 
     switch (model) {
       case DHT11:
@@ -58,9 +57,13 @@ uint8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
   return _notice;
 }
 
-uint8_t SDHT::read(uint16_t msDelay)
+uint8_t SDHT::read(uint8_t pin, uint8_t msDelay)
 {
-  int buffer;
+  uint8_t port;
+  if ((port = digitalPinToPort(pin)) == NOT_A_PIN) return SDHT_ERROR_PIN;
+
+  _bit = digitalPinToBitMask(pin);
+  data[0] = data[1] = data[2] = data[3] = data[4] = 0;
 
 #if defined(ESP8266)
   yield();
@@ -68,23 +71,22 @@ uint8_t SDHT::read(uint16_t msDelay)
 
   noInterrupts();
 
-  pinMode(_pin, OUTPUT);
-  digitalWrite(_pin, LOW);
+  int buffer;
+
+  pinMode(pin, OUTPUT);
+  digitalWrite(pin, LOW);
   delay(msDelay);
-  digitalWrite(_pin, HIGH);
-  pinMode(_pin, INPUT);
+  digitalWrite(pin, HIGH);
+  pinMode(pin, INPUT);
 
-  data[0] = data[1] = data[2] = data[3] = data[4] = 0;
-  _bit = digitalPinToBitMask(_pin);
-
-  if (pulse(_bit)) return SDHT_ERROR_CONNECT;
-  if (pulse(0)) return SDHT_ERROR_REQUEST;
-  if (pulse(_bit)) return SDHT_ERROR_RESPONSE;
+  if (pulse(port, _bit)) return SDHT_ERROR_CONNECT;
+  if (pulse(port, 0)) return SDHT_ERROR_REQUEST;
+  if (pulse(port, _bit)) return SDHT_ERROR_RESPONSE;
 
   for (int i = 0; i < 40; i++) {
-    if (pulse(0)) return SDHT_ERROR_WAIT;
+    if (pulse(port, 0)) return SDHT_ERROR_WAIT - (i * 2);
     buffer = _signal;
-    if (pulse(_bit) < 0) return SDHT_ERROR_VALUE;
+    if (pulse(port, _bit) < 0) return SDHT_ERROR_VALUE - (i * 2 + 1);
     data[i / 8] += data[i / 8] + (_signal > buffer);
   }
 
@@ -92,8 +94,8 @@ uint8_t SDHT::read(uint16_t msDelay)
   return SDHT_LOADED;
 }
 
-bool SDHT::pulse(uint8_t b) {
+bool SDHT::pulse(uint8_t port, uint8_t bitmask) {
   _signal = 0;
-  while ((*portInputRegister(_port) & _bit) == b) if (SDHT_CYCLES < _signal++) return true;
+  while ((*portInputRegister(port) & _bit) == bitmask) if (SDHT_CYCLES < _signal++) return true;
   return (_signal == 0);
 }

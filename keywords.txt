@@ -7,24 +7,16 @@
 ###########################################
 
 SDHT				KEYWORD1
-Temperature			KEYWORD1
 
 ###########################################
 # Methods			(KEYWORD2)
 ###########################################
 
 broadcast			KEYWORD2
-setCelsius			KEYWORD2
-setFahrenheit			KEYWORD2
-setKelvin			KEYWORD2
 
 ###########################################
 # Constants			(LITERAL1)
 ###########################################
-
-SDHT_NO_HEAT			LITERAL1
-SDHT_NO_KELVIN			LITERAL1
-SDHT_NO_FAHRENHEIT		LITERAL1
 
 DHT11				LITERAL1
 DHT12				LITERAL1
@@ -37,6 +29,7 @@ SDHT_NULL			LITERAL1
 SDHT_OK				LITERAL1
 SDHT_LOADED			LITERAL1
 SDHT_WRONG_PARITY		LITERAL1
+
 SDHT_ERROR_PIN			LITERAL1
 SDHT_ERROR_MODEL		LITERAL1
 SDHT_ERROR_CONNECT		LITERAL1
@@ -52,5 +45,3 @@ heat				LITERAL1
 humidity			LITERAL1
 kelvin				LITERAL1
 notice				LITERAL1
-pin				LITERAL1
-model				LITERAL1

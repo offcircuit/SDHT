@@ -22,13 +22,14 @@
 #define SDHT_OK 1
 #define SDHT_LOADED 2
 #define SDHT_WRONG_PARITY 3
-#define SDHT_ERROR_MODEL 4
-#define SDHT_ERROR_PIN 5
-#define SDHT_ERROR_CONNECT 6
-#define SDHT_ERROR_REQUEST 7
-#define SDHT_ERROR_RESPONSE 8
-#define SDHT_ERROR_WAIT 9
-#define SDHT_ERROR_VALUE 10
+
+#define SDHT_ERROR_MODEL -1
+#define SDHT_ERROR_PIN -2
+#define SDHT_ERROR_CONNECT -3
+#define SDHT_ERROR_REQUEST -4
+#define SDHT_ERROR_RESPONSE -5
+#define SDHT_ERROR_WAIT -6
+#define SDHT_ERROR_VALUE -7
 
 class SDHT
 {
@@ -83,7 +84,7 @@ class SDHT
     };
 
     double _humidity = 0;
-    uint8_t data[5], _notice = SDHT_NULL, _pin, _port, _bit;
+    uint8_t data[5], _notice = SDHT_NULL, _bit;
     uint16_t _signal;
 
 #ifndef SDHT_NO_HEAT
@@ -92,8 +93,8 @@ class SDHT
 
     Temperature _temperature;
 
-    uint8_t read(uint16_t msDelay);
-    bool pulse(uint8_t b);
+    uint8_t read(uint8_t pin, uint8_t msDelay);
+    bool pulse(uint8_t port, uint8_t bitmask);
 
   public:
     const double &humidity = _humidity;
