@@ -4,4 +4,7 @@ Class for DHT11, DHT12, DHT21, DHT22 sensors
 # TESTED ON
 
 arduino uno
+
+ESP8266 D1 mini
+
 DHT22
