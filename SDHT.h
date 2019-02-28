@@ -56,7 +56,7 @@ class SDHT
 
     double _humidity = 0;
     uint8_t _data[5], _bitmask, _port;
-    uint8_t _signal;
+    uint16_t _signal;
     Temperature _temperature;
 
 #ifndef SDHT_NO_HEAT
