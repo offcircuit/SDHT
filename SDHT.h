@@ -7,8 +7,8 @@
 #include "WProgram.h"
 #endif
 
-//#define SDHT_NO_HEAT //UNCOMMENT TO DISABLE HEAT INDEX
-//#define SDHT_NO_FAHRENHEIT //UNCOMMENT TO DISABLE FAHRENHEIT
+#define SDHT_NO_HEAT //UNCOMMENT TO DISABLE HEAT INDEX
+#define SDHT_NO_FAHRENHEIT //UNCOMMENT TO DISABLE FAHRENHEIT
 
 #define DHT11 0
 #define DHT12 1
@@ -64,7 +64,6 @@ class SDHT
     Temperature _heat;
 #endif
 
-    int8_t notice(int8_t id);
     uint16_t pulse(uint8_t bitmask);
 
   public:

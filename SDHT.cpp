@@ -1,8 +1,8 @@
 #include "SDHT.h"
 
 int8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
-  if (model > DHT22) return notice(SDHT_ERROR_MODEL);
-  else if ((_port = digitalPinToPort(pin)) == NOT_A_PIN) return notice(SDHT_ERROR_PIN);
+  if (model > DHT22) return SDHT_ERROR_MODEL;
+  else if ((_port = digitalPinToPort(pin)) == NOT_A_PIN) return SDHT_ERROR_PIN;
   else {
     uint16_t buffer, signal;
     uint8_t data[5] = {0, 0, 0, 0, 0};
@@ -19,19 +19,17 @@ int8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
     digitalWrite(pin, HIGH);
     pinMode(pin, INPUT);
 
-    noInterrupts();
-
-    if (!pulse(_bitmask)) return notice(SDHT_ERROR_CONNECT);
-    if (!pulse(0)) return notice(SDHT_ERROR_REQUEST);
-    if (!pulse(_bitmask)) return notice(SDHT_ERROR_RESPONSE);
+    if (!pulse(_bitmask)) return SDHT_ERROR_CONNECT;
+    if (!pulse(0)) return SDHT_ERROR_REQUEST;
+    if (!pulse(_bitmask)) return SDHT_ERROR_RESPONSE;
 
     for (int i = 0; i < 40; i++) {
-      if (!(buffer = pulse(0))) return notice(SDHT_ERROR_WAIT - (i * 2));
-      if (!(signal = pulse(_bitmask))) return notice(SDHT_ERROR_VALUE - (i * 2 + 1));
+      if (!(buffer = pulse(0))) return SDHT_ERROR_WAIT - (i * 2);
+      if (!(signal = pulse(_bitmask))) return SDHT_ERROR_VALUE - (i * 2 + 1);
       data[i / 8] += data[i / 8] + (signal > buffer);
     }
 
-    if (data[4] != uint8_t(data[0] + data[1] + data[2] + data[3])) return notice(SDHT_ERROR_PARITY);
+    if (data[4] != uint8_t(data[0] + data[1] + data[2] + data[3])) return SDHT_ERROR_PARITY;
 
     switch (model) {
       case DHT11:
@@ -82,12 +80,7 @@ int8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
 
 #endif
   }
-  return notice(SDHT_OK);
-}
-
-int8_t SDHT::notice(int8_t id) {
-  interrupts();
-  return id;
+  return SDHT_OK;
 }
 
 uint16_t SDHT::pulse(uint8_t bitmask) {
