@@ -15,8 +15,10 @@
 #define DHT21 2
 #define DHT22 3
 
-#define SDHT_CYCLES microsecondstoclockcycles(200)
+#define SDHT_CYCLES microsecondsToClockCycles(200)
 
+#define SDHT_OK 1
+#define SDHT_ERROR_PARITY 0
 #define SDHT_ERROR_MODEL -1
 #define SDHT_ERROR_PIN -2
 #define SDHT_ERROR_CONNECT -3
@@ -55,15 +57,15 @@ class SDHT
     };
 
     double _humidity = 0;
-    uint8_t _data[5], _bitmask, _port;
+    uint8_t _bitmask, _port;
     Temperature _temperature;
 
 #ifndef SDHT_NO_HEAT
     Temperature _heat;
 #endif
 
+    int8_t notice(int8_t id);
     uint16_t pulse(uint8_t bitmask);
-    uint8_t read(uint8_t pin, uint8_t msDelay);
 
   public:
     const double &humidity = _humidity;
@@ -74,7 +76,7 @@ class SDHT
 #endif
 
     explicit SDHT() {};
-    uint8_t broadcast(uint8_t pin, uint8_t model);
+    int8_t broadcast(uint8_t pin, uint8_t model);
 };
 
 #endif

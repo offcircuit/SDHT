@@ -1,26 +1,53 @@
 #include "SDHT.h"
 
-uint8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
-  int8_t notice;
+int8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
+  uint16_t buffer, signal;
+  uint8_t data[5] = {0, 0, 0, 0, 0};
 
-  if (model > DHT22) notice = SDHT_ERROR_MODEL;
-  else if ((_port = digitalPinToPort(pin)) == NOT_A_PIN) notice = SDHT_ERROR_PIN;
-  else if (!(notice = read(pin, (model < DHT21) ? 20 : 1))) {
+  if (model > DHT22) return notice(SDHT_ERROR_MODEL);
+  else if ((_port = digitalPinToPort(pin)) == NOT_A_PIN) return notice(SDHT_ERROR_PIN);
+  else {
+    _bitmask = digitalPinToBitMask(pin);
+
+#ifdef ESP8266
+    yield();
+#endif
+
+    pinMode(pin, OUTPUT);
+    digitalWrite(pin, LOW);
+    delay((model < DHT21) ? 20 : 1);
+    digitalWrite(pin, HIGH);
+    pinMode(pin, INPUT);
+
+    noInterrupts();
+
+    if (!pulse(_bitmask)) return notice(SDHT_ERROR_CONNECT);
+    if (!pulse(0)) return notice(SDHT_ERROR_REQUEST);
+    if (!pulse(_bitmask)) return notice(SDHT_ERROR_RESPONSE);
+
+    for (int i = 0; i < 40; i++) {
+      if (!(buffer = pulse(0))) return notice(SDHT_ERROR_WAIT - (i * 2));
+      if (!(signal = pulse(_bitmask))) return notice(SDHT_ERROR_VALUE - (i * 2 + 1));
+      data[i / 8] += data[i / 8] + (signal > buffer);
+    }
+
+    if (data[4] != uint8_t(data[0] + data[1] + data[2] + data[3])) return notice(SDHT_ERROR_PARITY);
+
     switch (model) {
       case DHT11:
-        _humidity = _data[0] + (_data[1] * .1);
-        _temperature.setCelsius(_data[2] + (_data[3] * .1));
+        _humidity = data[0] + (data[1] * .1);
+        _temperature.setCelsius(data[2] + (data[3] * .1));
         break;
 
       case DHT12:
-        _humidity = _data[0] + (_data[1] * .1);
-        _temperature.setCelsius((_data[2] + ((_data[3] & 0x7F) * .1)) * ((_data[3] & 0x80) ? -1 : 1));
+        _humidity = data[0] + (data[1] * .1);
+        _temperature.setCelsius((data[2] + ((data[3] & 0x7F) * .1)) * ((data[3] & 0x80) ? -1 : 1));
         break;
 
       case DHT21:
       case DHT22:
-        _humidity = word(_data[0], _data[1]) * .1;
-        _temperature.setCelsius(word((_data[2] & 0x7F), _data[3]) * ((_data[2] & 0x80) ? -.1 : .1));
+        _humidity = word(data[0], data[1]) * .1;
+        _temperature.setCelsius(word((data[2] & 0x7F), data[3]) * ((data[2] & 0x80) ? -.1 : .1));
         break;
     }
 #ifndef SDHT_NO_HEAT
@@ -54,45 +81,17 @@ uint8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
     _heat.setFahrenheit(heatIndex);
 
 #endif
-    notice = (_data[4] == uint8_t(_data[0] + _data[1] + _data[2] + _data[3]));
   }
+  return notice(SDHT_OK);
+}
+
+int8_t SDHT::notice(int8_t id) {
   interrupts();
-  return notice;
+  return id;
 }
 
 uint16_t SDHT::pulse(uint8_t bitmask) {
   int16_t signal = 0;
   while ((*portInputRegister(_port) & _bitmask) == bitmask) if (SDHT_CYCLES < signal++) return 0;
   return signal;
-}
-
-uint8_t SDHT::read(uint8_t pin, uint8_t msDelay)
-{
-  uint16_t buffer, signal;
-
-  _bitmask = digitalPinToBitMask(pin);
-  _data[0] = _data[1] = _data[2] = _data[3] = _data[4] = 0;
-
-#ifdef ESP8266
-  yield();
-#endif
-
-  pinMode(pin, OUTPUT);
-  digitalWrite(pin, LOW);
-  delay(msDelay);
-  digitalWrite(pin, HIGH);
-  pinMode(pin, INPUT);
-
-  noInterrupts();
-
-  if (!pulse(_bitmask)) return SDHT_ERROR_CONNECT;
-  if (!pulse(0)) return SDHT_ERROR_REQUEST;
-  if (!pulse(_bitmask)) return SDHT_ERROR_RESPONSE;
-
-  for (int i = 0; i < 40; i++) {
-    if (!(buffer = pulse(0))) return SDHT_ERROR_WAIT - (i * 2);
-    if (!(signal = pulse(_bitmask))) return SDHT_ERROR_VALUE - (i * 2 + 1);
-    _data[i / 8] += _data[i / 8] + (signal > buffer);
-  }
-  return false;
 }
