@@ -60,15 +60,15 @@ uint8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
   return notice;
 }
 
-bool SDHT::pulse(uint8_t bitmask) {
-  _signal = 0;
-  while ((*portInputRegister(_port) & _bitmask) == bitmask) if (SDHT_CYCLES < _signal++) return false;
-  return (_signal != 0);
+uint16_t SDHT::pulse(uint8_t bitmask) {
+  int16_t signal = 0;
+  while ((*portInputRegister(_port) & _bitmask) == bitmask) if (SDHT_CYCLES < signal++) return 0;
+  return signal;
 }
 
 uint8_t SDHT::read(uint8_t pin, uint8_t msDelay)
 {
-  uint16_t buffer;
+  uint16_t buffer, signal;
 
   _bitmask = digitalPinToBitMask(pin);
   _data[0] = _data[1] = _data[2] = _data[3] = _data[4] = 0;
@@ -90,10 +90,9 @@ uint8_t SDHT::read(uint8_t pin, uint8_t msDelay)
   if (!pulse(_bitmask)) return SDHT_ERROR_RESPONSE;
 
   for (int i = 0; i < 40; i++) {
-    if (!pulse(0)) return SDHT_ERROR_WAIT - (i * 2);
-    buffer = _signal;
-    if (!pulse(_bitmask) < 0) return SDHT_ERROR_VALUE - (i * 2 + 1);
-    _data[i / 8] += _data[i / 8] + (_signal > buffer);
+    if (!(buffer = pulse(0))) return SDHT_ERROR_WAIT - (i * 2);
+    if (!(signal = pulse(_bitmask))) return SDHT_ERROR_VALUE - (i * 2 + 1);
+    _data[i / 8] += _data[i / 8] + (signal > buffer);
   }
   return false;
 }
