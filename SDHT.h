@@ -15,7 +15,7 @@
 #define DHT21 2
 #define DHT22 3
 
-#define SDHT_CYCLES 200
+#define SDHT_CYCLES microsecondstoclockcycles(200)
 
 #define SDHT_ERROR_MODEL -1
 #define SDHT_ERROR_PIN -2
