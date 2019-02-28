@@ -17,7 +17,11 @@
 
 #define SDHT_CYCLES microsecondsToClockCycles(200)
 
+#ifdef ESP8266
+#define SDHT_NOTICE(i) ({xt_wsr_ps(SDHT_REG_STATE); i;})
+#else
 #define SDHT_NOTICE(i) ({SREG ^= 0x80; i;})
+#endif
 
 #define SDHT_OK SDHT_NOTICE(1)
 #define SDHT_ERROR_PARITY SDHT_NOTICE(0)
@@ -27,7 +31,7 @@
 #define SDHT_ERROR_REQUEST SDHT_NOTICE(-4)
 #define SDHT_ERROR_RESPONSE SDHT_NOTICE(-5)
 #define SDHT_ERROR_WAIT(i) SDHT_NOTICE(-6 - (i * 2))
-#define SDHT_ERROR_VALUE(i) SDHT_NOTICE(-6 - ((i * 2) + 1))
+#define SDHT_ERROR_VALUE(i) SDHT_NOTICE(-7 - ((i * 2) + 1))
 
 class SDHT
 {

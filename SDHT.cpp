@@ -1,5 +1,9 @@
 #include "SDHT.h"
 
+#ifdef ESP8266
+int32_t SDHT_REG_STATE;
+#endif
+
 int8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
   if (model > DHT22) return SDHT_ERROR_MODEL;
   else if ((_port = digitalPinToPort(pin)) == NOT_A_PIN) return SDHT_ERROR_PIN;
@@ -19,7 +23,11 @@ int8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
     digitalWrite(pin, HIGH);
     pinMode(pin, INPUT);
 
+#ifdef ESP8266
+    SDHT_REG_STATE = xt_rsil(15);
+#else
     SREG ^= 0x80;
+#endif
 
     if (!pulse(_bitmask)) return SDHT_ERROR_CONNECT;
     if (!pulse(0)) return SDHT_ERROR_REQUEST;
