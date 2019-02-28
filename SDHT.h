@@ -27,7 +27,7 @@
 #define SDHT_ERROR_REQUEST SDHT_NOTICE(-4)
 #define SDHT_ERROR_RESPONSE SDHT_NOTICE(-5)
 #define SDHT_ERROR_WAIT(i) SDHT_NOTICE(-6 - (i * 2))
-#define SDHT_ERROR_VALUE(i) SDHT_NOTICE(-7 - ((i * 2) + 1))
+#define SDHT_ERROR_VALUE(i) SDHT_NOTICE(-6 - ((i * 2) + 1))
 
 class SDHT
 {
