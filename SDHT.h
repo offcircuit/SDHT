@@ -56,14 +56,13 @@ class SDHT
 
     double _humidity = 0;
     uint8_t _data[5], _bitmask, _port;
-    uint16_t _signal;
     Temperature _temperature;
 
 #ifndef SDHT_NO_HEAT
     Temperature _heat;
 #endif
 
-    bool pulse(uint8_t bitmask);
+    uint16_t pulse(uint8_t bitmask);
     uint8_t read(uint8_t pin, uint8_t msDelay);
 
   public:
