@@ -54,7 +54,7 @@ uint8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
     _heat.setFahrenheit(heatIndex);
 
 #endif
-    notice = (_data[4] == uint8_t(_data[0] + _data[1] + _data[2] + _data[3])) ? SDHT_OK : SDHT_WRONG_PARITY;
+    notice = (_data[4] == uint8_t(_data[0] + _data[1] + _data[2] + _data[3]));
   }
   interrupts();
   return notice;
