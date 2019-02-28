@@ -1,12 +1,12 @@
 #include "SDHT.h"
 
 int8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
-  uint16_t buffer, signal;
-  uint8_t data[5] = {0, 0, 0, 0, 0};
-
   if (model > DHT22) return notice(SDHT_ERROR_MODEL);
   else if ((_port = digitalPinToPort(pin)) == NOT_A_PIN) return notice(SDHT_ERROR_PIN);
   else {
+    uint16_t buffer, signal;
+    uint8_t data[5] = {0, 0, 0, 0, 0};
+
     _bitmask = digitalPinToBitMask(pin);
 
 #ifdef ESP8266
