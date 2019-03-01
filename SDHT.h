@@ -49,8 +49,8 @@ class SDHT
     int8_t broadcast(uint8_t model, uint8_t pin);
     double fahrenheit(double celsius);
     double heatIndex(double humidity, double celsius);
+  
   private:
-
     double _humidity = 0, _celsius = 0;
     uint8_t _bitmask, _port;
 
