@@ -8,20 +8,21 @@ int8_t SDHT::broadcast(uint8_t model, uint8_t pin) {
   else {
     uint16_t buffer, signal;
     uint8_t data[5] = {0, 0, 0, 0, 0};
-    volatile uint8_t *mode, *output;
-
-    _bitmask = digitalPinToBitMask(pin);
-
+    
 #ifdef ESP8266
+    volatile uint32_t *mode, *output;
     yield();
     SDHT_REG_STATE = xt_rsil(15);
 #else
+    volatile uint8_t *mode, *output;
     SDHT_REG_STATE = SREG;
     SREG &= 0x7F;
 #endif
 
+    _bitmask = digitalPinToBitMask(pin);
     mode = portModeRegister(_port);
     output = portOutputRegister(_port);
+    
     *mode |= _bitmask;
     *output &= ~_bitmask;
     wait((((model < DHT21) ? 20 : 1) * 1000) << (1 + (F_CPU >= 16000000L)));
@@ -98,8 +99,8 @@ uint16_t SDHT::pulse(uint8_t bitmask) {
 }
 
 void SDHT::wait(uint16_t useconds) {
-  __asm__ __volatile__ (
-    "1: sbiw %0,1" "\n\t"
-    "brne 1b" : "=w" (useconds) : "0" (useconds)
-  );
+  interrupts();
+  delayMicroseconds(useconds);
+  noInterrupts();
+//  __asm__ __volatile__("1: sbiw %0,1" "\n\t"  "brne 1b" : "=w" (useconds) : "0" (useconds));
 }
