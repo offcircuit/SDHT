@@ -12,7 +12,7 @@
 #define DHT21 2
 #define DHT22 3
 
-#define SDHT_CYCLES microsecondsToClockCycles(200)
+#define SDHT_CYCLES (F_CPU / 10000L) * 200
 
 #ifdef ESP8266
 #define SDHT_NOTICE(i) ({xt_wsr_ps(SDHT_REG_STATE); i;})
