@@ -25,9 +25,9 @@ int8_t SDHT::broadcast(uint8_t model, uint8_t pin) {
  
     *mode |= _bitmask;
     *output &= ~_bitmask;
-    interrupts();
+    SREG |= 0x80;
     delay((model < DHT21) ? 20 : 1);
-    noInterrupts();
+    SREG &= 0x7F;
     *output |= _bitmask;
     *mode &= ~_bitmask;
 
