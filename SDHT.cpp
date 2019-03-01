@@ -1,8 +1,6 @@
 #include "SDHT.h"
 
-#ifdef ESP8266
 int32_t SDHT_REG_STATE;
-#endif
 
 int8_t SDHT::broadcast(uint8_t model, uint8_t pin) {
   if (model > DHT22) return SDHT_NOTICE_ERROR_MODEL;
@@ -18,7 +16,8 @@ int8_t SDHT::broadcast(uint8_t model, uint8_t pin) {
     yield();
     SDHT_REG_STATE = xt_rsil(15);
 #else
-    SREG ^= 0x80;
+    SDHT_REG_STATE = SREG;
+    SREG &= 0x80;
 #endif
 
     mode = portModeRegister(_port);
