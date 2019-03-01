@@ -22,12 +22,9 @@ int8_t SDHT::broadcast(uint8_t model, uint8_t pin) {
 
     mode = portModeRegister(_port);
     output = portOutputRegister(_port);
- 
     *mode |= _bitmask;
     *output &= ~_bitmask;
-    interrupts();
-    delay((model < DHT21) ? 20 : 1);
-    noInterrupts();
+    wait((((model < DHT21) ? 20 : 1) * 1000) << (1 + (F_CPU >= 16000000L)));
     *output |= _bitmask;
     *mode &= ~_bitmask;
 
@@ -95,7 +92,14 @@ double SDHT::heatIndex(double humidity, double celsius) {
 }
 
 uint16_t SDHT::pulse(uint8_t bitmask) {
-  int16_t signal = 0;
+  uint16_t signal = 0;
   while ((*portInputRegister(_port) & _bitmask) == bitmask) if (SDHT_CYCLES < signal++) return 0;
   return signal;
+}
+
+void SDHT::wait(uint16_t useconds) {
+  __asm__ __volatile__ (
+    "1: sbiw %0,1" "\n\t"
+    "brne 1b" : "=w" (useconds) : "0" (useconds)
+  );
 }
