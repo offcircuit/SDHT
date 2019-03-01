@@ -13,6 +13,8 @@ SDHT				KEYWORD1
 ###########################################
 
 broadcast			KEYWORD2
+fahrenheit			KEYWORD2
+heatIndex			KEYWORD2
 
 ###########################################
 # Constants			(LITERAL1)
@@ -23,9 +25,6 @@ DHT12				LITERAL1
 DHT21				LITERAL1
 DHT22				LITERAL1
 
-SDHT_NO_HEAT			LITERAL1
-SDHT_NO_FAHRENHEIT		LITERAL1
-
 SDHT_OK				LITERAL1
 SDHT_ERROR_PARITY		LITERAL1
 SDHT_ERROR_MODEL		LITERAL1
@@ -34,8 +33,5 @@ SDHT_ERROR_CONNECT		LITERAL1
 SDHT_ERROR_REQUEST		LITERAL1
 SDHT_ERROR_RESPONSE		LITERAL1
 
-temperature			LITERAL1
 celsius				LITERAL1
-fahrenheit			LITERAL1
-heat				LITERAL1
 humidity			LITERAL1
