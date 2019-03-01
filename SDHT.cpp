@@ -4,7 +4,7 @@
 int32_t SDHT_REG_STATE;
 #endif
 
-int8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
+int8_t SDHT::broadcast(uint8_t model, uint8_t pin) {
   if (model > DHT22) return SDHT_NOTICE_ERROR_MODEL;
   else if ((_port = digitalPinToPort(pin)) == NOT_A_PIN) return SDHT_NOTICE_ERROR_PIN;
   else {
@@ -34,8 +34,8 @@ int8_t SDHT::broadcast(uint8_t pin, uint8_t model) {
     if (!pulse(_bitmask)) return SDHT_NOTICE_ERROR_RESPONSE;
 
     for (int i = 0; i < 40; i++) {
-      if (!(buffer = pulse(0))) return SDHT_NOTICE_ERROR_WAIT(i);
-      if (!(signal = pulse(_bitmask))) return SDHT_NOTICE_ERROR_VALUE(i);
+      if (!(buffer = pulse(0))) return SDHT_NOTICE_ERROR_LOW(i);
+      if (!(signal = pulse(_bitmask))) return SDHT_NOTICE_ERROR_HIGH(i);
       data[i / 8] += data[i / 8] + (signal > buffer);
     }
 
