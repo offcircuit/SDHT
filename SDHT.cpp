@@ -17,7 +17,7 @@ int8_t SDHT::broadcast(uint8_t model, uint8_t pin) {
     SDHT_REG_STATE = xt_rsil(15);
 #else
     SDHT_REG_STATE = SREG;
-    SREG &= 0x0F;
+    SREG &= 0x7F;
 #endif
 
     mode = portModeRegister(_port);
