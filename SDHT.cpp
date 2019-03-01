@@ -10,24 +10,25 @@ int8_t SDHT::broadcast(uint8_t model, uint8_t pin) {
   else {
     uint16_t buffer, signal;
     uint8_t data[5] = {0, 0, 0, 0, 0};
+    volatile uint8_t *mode, *output;
 
     _bitmask = digitalPinToBitMask(pin);
 
 #ifdef ESP8266
     yield();
-#endif
-
-    pinMode(pin, OUTPUT);
-    digitalWrite(pin, LOW);
-    delay((model < DHT21) ? 20 : 1);
-    digitalWrite(pin, HIGH);
-    pinMode(pin, INPUT);
-
-#ifdef ESP8266
     SDHT_REG_STATE = xt_rsil(15);
 #else
     SREG ^= 0x80;
 #endif
+
+    mode = portModeRegister(_port);
+    output = portOutputRegister(_port);
+ 
+    *mode |= _bitmask;
+    *output &= ~_bitmask;
+    delay((model < DHT21) ? 20 : 1);
+    *output |= _bitmask;
+    *mode &= ~_bitmask;
 
     if (!pulse(_bitmask)) return SDHT_NOTICE_ERROR_CONNECT;
     if (!pulse(0)) return SDHT_NOTICE_ERROR_REQUEST;
@@ -69,7 +70,6 @@ double SDHT::fahrenheit(double celsius) {
 double SDHT::heatIndex(double humidity, double celsius) {
 
   celsius = fahrenheit(celsius);
-  
   double heatIndex = (0.5 * (celsius + 61.0 + ((celsius - 68.0) * 1.2) + (humidity * 0.094)));
 
   if (heatIndex > 79) {
