@@ -11,7 +11,8 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   if ((notice  = dht.broadcast(DHT22, 2)) == SDHT_OK) layout(); else Serial.println(notice);
-  delay(4000);
+  delay(2000);
+
 }
 
 void layout() {
@@ -21,12 +22,12 @@ void layout() {
   Serial.println(String(dht.humidity, 1));
   Serial.println("   Temperature => ");
   Serial.print("   Celsius => ");
-  Serial.print(String(dht.temperature.celsius, 2));
+  Serial.print(String(dht.celsius, 2));
   Serial.print("   Fahrenheit => ");
-  Serial.println(String(dht.temperature.fahrenheit, 2));
+  Serial.println(String(dht.fahrenheit(dht.celsius), 2));
   Serial.println("   Heat index => ");
   Serial.print("   Celsius => ");
-  Serial.print(String(dht.heat.celsius, 2));
+  Serial.print(String(dht.heatIndex(dht.humidity, dht.celsius), 2));
   Serial.print("   Fahrenheit => ");
-  Serial.println(String(dht.heat.fahrenheit, 2));
+  Serial.println(String(dht.fahrenheit(dht.heatIndex(dht.humidity, dht.celsius)), 2));
 }
