@@ -5,6 +5,6 @@ Class for DHT11, DHT12, DHT21, DHT22 sensors
 
 arduino uno
 
-ESP8266 D1 mini - not working...
+ESP8266 D1 mini - not working... working...
 
 DHT22
