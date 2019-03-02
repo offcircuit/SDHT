@@ -33,7 +33,7 @@ int8_t SDHT::broadcast(uint8_t model, uint8_t pin) {
     if (!pulse(0)) return SDHT_NOTICE_ERROR_REQUEST;
     if (!pulse(_bitmask)) return SDHT_NOTICE_ERROR_RESPONSE;
 
-    for (int i = 0; i < 40; i++) {
+    for (uint8_t i = 0; i < 40; i++) {
       if (!(buffer = pulse(0))) return SDHT_NOTICE_ERROR_LOW(i);
       if (!(signal = pulse(_bitmask))) return SDHT_NOTICE_ERROR_HIGH(i);
       data[i / 8] += data[i / 8] + (signal > buffer);
