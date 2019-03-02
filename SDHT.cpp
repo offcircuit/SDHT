@@ -102,5 +102,4 @@ void SDHT::wait(uint16_t useconds) {
   interrupts();
   delayMicroseconds(useconds);
   noInterrupts();
-//  __asm__ __volatile__("1: sbiw %0,1" "\n\t"  "brne 1b" : "=w" (useconds) : "0" (useconds));
 }
