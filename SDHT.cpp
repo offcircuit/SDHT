@@ -8,7 +8,7 @@ int8_t SDHT::broadcast(uint8_t model, uint8_t pin) {
   else {
     uint16_t buffer, signal;
     uint8_t data[5] = {0, 0, 0, 0, 0};
-    
+
 #ifdef ESP8266
     volatile uint32_t *mode, *output;
     yield();
@@ -22,10 +22,14 @@ int8_t SDHT::broadcast(uint8_t model, uint8_t pin) {
     _bitmask = digitalPinToBitMask(pin);
     mode = portModeRegister(_port);
     output = portOutputRegister(_port);
-    
+
     *mode |= _bitmask;
     *output &= ~_bitmask;
-    wait((((model < DHT21) ? 20 : 1) * 1000));
+
+    interrupts();
+    delayMicroseconds(((model < DHT21) ? 20 : 1) * 1000);
+    noInterrupts();
+
     *output |= _bitmask;
     *mode &= ~_bitmask;
 
@@ -96,10 +100,4 @@ uint16_t SDHT::pulse(uint8_t bitmask) {
   uint16_t signal = 0;
   while ((*portInputRegister(_port) & _bitmask) == bitmask) if (SDHT_CYCLES < signal++) return 0;
   return signal;
-}
-
-void SDHT::wait(uint16_t useconds) {
-  interrupts();
-  delayMicroseconds(useconds);
-  noInterrupts();
 }

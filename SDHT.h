@@ -56,7 +56,6 @@ class SDHT
     uint8_t _bitmask, _port;
 
     uint16_t pulse(uint8_t bitmask);
-    void wait(uint16_t useconds);
 };
 
 #endif
