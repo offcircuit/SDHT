@@ -14,6 +14,8 @@
 
 #define SDHT_CYCLES microsecondsToClockCycles(200)
 
+extern int32_t SDHT_REG_STATE;
+
 #ifdef ESP8266
 #define SDHT_NOTICE(i) ({xt_wsr_ps(SDHT_REG_STATE); i;})
 #else
