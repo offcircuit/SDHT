@@ -57,9 +57,9 @@ class SDHT
     }
 
     uint16_t pulse(uint8_t pin, int state) {
-      uint16_t c = SDHT_CYCLES;
-      while ((digitalRead(pin) == state) && c--);
-      return c;
+      uint16_t cycle = SDHT_CYCLES;
+      while ((digitalRead(pin) == state) && cycle--);
+      return cycle;
     }
 };
 
