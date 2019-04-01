@@ -52,6 +52,8 @@ class SDHT
           _humidity = (uint16_t(data[0] << 8) | data[1]) * .1;
           _celsius = (uint16_t((data[2] & 0x7F)) | data[3]) * ((data[2] & 0x80) ? -.1 : .1);
           break;
+
+        default: return false;
       }
       return true;
     }
