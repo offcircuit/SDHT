@@ -8,7 +8,8 @@ Results are in tenths.
 example:
 
 
-celsius 217 = 21.7 degrees celsius.
+celsius 217 = 21.7 degrees celsius
+
 humidity 455 = 45.5% humidity
 
 
