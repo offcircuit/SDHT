@@ -8,3 +8,5 @@ arduino uno
 ESP8266 D1 mini - not working... working...
 
 DHT22
+
+TTINY
