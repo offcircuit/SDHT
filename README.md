@@ -17,7 +17,7 @@ humidity 455 = 45.5% humidity
 
 arduino uno
 
-ESP8266 D1 mini - not working... working...
+wemos D1 mini - not working... working...
 
 DHT22
 
