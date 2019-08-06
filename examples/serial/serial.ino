@@ -14,7 +14,7 @@ void loop() {
 
 void layout() {
   Serial.print("   Humdity => ");
-  Serial.println(String(dht.humidity, 1));
+  Serial.println(String(dht.humidity / 10, 1));
   Serial.print("   Celsius => ");
-  Serial.println(String(dht.celsius, 2));
+  Serial.println(String(dht.celsius / 10, 2));
 }
