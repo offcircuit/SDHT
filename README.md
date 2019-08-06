@@ -15,10 +15,12 @@ humidity 455 = 45.5% humidity
 
 # TESTED ON
 
+DHT11
+
+DHT22
+
 arduino uno
 
 wemos D1 mini - not working... working...
 
-DHT22
-
-TTINY
+attiny
