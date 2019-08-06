@@ -11,12 +11,12 @@
 class SDHT
 {
   private:
-    uint8_t _humidity = 0;
-    int8_t _celsius = 0;
+    uint16_t _humidity = 0;
+    int16_t _celsius = 0;
 
   public:
-    const uint8_t &humidity = _humidity;
-    const int8_t &celsius = _celsius;
+    const uint16_t &humidity = _humidity;
+    const int16_t &celsius = _celsius;
 
     explicit SDHT() {};
 
