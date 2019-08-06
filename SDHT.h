@@ -11,10 +11,12 @@
 class SDHT
 {
   private:
-    uint8_t _humidity = 0, _celsius = 0;
+    uint8_t _humidity = 0;
+    int8_t _celsius = 0;
 
   public:
-    const uint8_t &humidity = _humidity, &celsius = _celsius;
+    const uint8_t &humidity = _humidity;
+    const int8_t &celsius = _celsius;
 
     explicit SDHT() {};
 
@@ -38,8 +40,8 @@ class SDHT
 
       switch (model) {
         case DHT11:
-          _humidity = (data[0] * 10) + data[1];;
-          _celsius = (data[2] * 10) + data[3];;
+          _humidity = (data[0] * 10) + data[1];
+          _celsius = (data[2] * 10) + data[3];
           break;
 
         case DHT12:
