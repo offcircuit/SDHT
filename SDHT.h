@@ -11,10 +11,10 @@
 class SDHT
 {
   private:
-    double _humidity = 0, _celsius = 0;
+    uint8_t _humidity = 0, _celsius = 0;
 
   public:
-    const double &humidity = _humidity, &celsius = _celsius;
+    const uint8_t &humidity = _humidity, &celsius = _celsius;
 
     explicit SDHT() {};
 
@@ -38,19 +38,19 @@ class SDHT
 
       switch (model) {
         case DHT11:
-          _humidity = data[0] + (data[1] * .1);
-          _celsius = data[2] + (data[3] * .1);
+          _humidity = (data[0] * 10) + data[1];;
+          _celsius = (data[2] * 10) + data[3];;
           break;
 
         case DHT12:
-          _humidity = data[0] + (data[1] * .1);
-          _celsius = (data[2] + ((data[3] & 0x7F) * .1)) * ((data[3] & 0x80) ? -1 : 1);
+          _humidity = (data[0] * 10) + data[1];
+          _celsius = ((data[2] * 10) + (data[3] & 0x7F)) * ((data[3] & 0x80) ? -1 : 1);
           break;
 
         case DHT21:
         case DHT22:
-          _humidity = (uint16_t(data[0] << 8) | data[1]) * .1;
-          _celsius = (uint16_t((data[2] & 0x7F) << 8) | data[3]) * ((data[2] & 0x80) ? -.1 : .1);
+          _humidity = (uint16_t(data[0] << 8) | data[1]);
+          _celsius = (uint16_t((data[2] & 0x7F) << 8) | data[3]) * ((data[2] & 0x80) ? -1 : 1);
           break;
 
         default: return false;
