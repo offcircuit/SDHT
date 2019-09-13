@@ -20,7 +20,7 @@ class SDHT
 
     explicit SDHT() {};
 
-    bool broadcast(uint8_t model, uint8_t pin) {
+    bool read(uint8_t model, uint8_t pin) {
       uint8_t data[5] = {0, 0, 0, 0, 0};
 
       pinMode(pin, OUTPUT);
