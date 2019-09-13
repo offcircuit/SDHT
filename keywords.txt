@@ -12,7 +12,7 @@ SDHT	KEYWORD1
 # Methods			(KEYWORD2)
 ###########################################
 
-broadcast	KEYWORD2
+read	KEYWORD2
 
 ###########################################
 # Constants			(LITERAL1)
@@ -22,9 +22,6 @@ DHT11	LITERAL1
 DHT12	LITERAL1
 DHT21	LITERAL1
 DHT22	LITERAL1
-
-SDHT_OK	LITERAL1
-SDHT_ERROR	LITERAL1
 
 celsius				LITERAL1
 humidity			LITERAL1
