@@ -23,10 +23,6 @@ class SDHT
     bool broadcast(uint8_t model, uint8_t pin) {
       uint8_t data[5] = {0, 0, 0, 0, 0};
 
-#ifdef ESP8266
-      yield();
-#endif
-
       pinMode(pin, OUTPUT);
       digitalWrite(pin, LOW);
       pulseIn(pin, HIGH, (model < DHT21) ? 20000 : 1000);
