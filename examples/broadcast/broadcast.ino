@@ -13,8 +13,8 @@ void loop() {
 }
 
 void layout() {
-  Serial.print("   Humdity => ");
-  Serial.println(String(double(dht.humidity) / 10, 1));
   Serial.print("   Celsius => ");
   Serial.println(String(double(dht.celsius) / 10, 1));
+  Serial.print("   Humdity => ");
+  Serial.println(String(double(dht.humidity) / 10, 1));
 }
