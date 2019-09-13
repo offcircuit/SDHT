@@ -8,7 +8,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (dht.broadcast(DHT22, 2)) layout();
+  if (dht.read(DHT22, 2)) layout();
   delay(2000);
 }
 
