@@ -21,6 +21,6 @@ DHT22
 
 arduino uno
 
-wemos D1 mini - not working... working...
+esp8266 D1 mini
 
 attiny
