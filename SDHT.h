@@ -8,8 +8,7 @@
 
 #define SDHT_CYCLES microsecondsToClockCycles(200)
 
-class SDHT
-{
+class SDHT {
   private:
     uint16_t _humidity = 0;
     int16_t _celsius = 0;
