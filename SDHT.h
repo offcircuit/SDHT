@@ -1,10 +1,12 @@
 #ifndef SDHT_H
 #define SDHT_H
 
-#define DHT11 0
-#define DHT12 1
-#define DHT21 2
-#define DHT22 3
+enum SDHT_MODEL {
+    DHT11 = 0,
+    DHT12 = 1,
+    DHT21 = 2,
+    DHT22 = 3,
+};
 
 #define SDHT_CYCLES microsecondsToClockCycles(200)
 
